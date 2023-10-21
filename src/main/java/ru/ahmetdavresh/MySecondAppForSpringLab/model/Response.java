@@ -1,14 +1,13 @@
 package ru.ahmetdavresh.MySecondAppForSpringLab.model;
 
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 
-@Getter
+@Data
+@Builder
 public class Response {
-    @Getter
     private String uid;
-    @Getter
     private String operationUid;
-    @Getter
     private String systemTime;
     private String code;
     private String errorCode;

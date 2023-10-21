@@ -12,7 +12,7 @@ import ru.ahmetdavresh.MySecondAppForSpringLab.model.Response;
 public class MyController {
     @PostMapping(value = "/feedback")
     public ResponseEntity<Response> feedback(@RequestBody Request request) {
-        Response response = Response.Builder()
+        Response response = Response.builder()
                 .uid(request.getUid())
                 .operationUid(request.getOperationUid())
                 .systemTime(request.getSystemTime())
