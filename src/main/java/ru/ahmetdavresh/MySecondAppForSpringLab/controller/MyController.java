@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.ahmetdavresh.MySecondAppForSpringLab.exception.ValidationFailedException;
+import ru.ahmetdavresh.MySecondAppForSpringLab.exception.UnsupportedCodeException;
 import ru.ahmetdavresh.MySecondAppForSpringLab.model.Request;
 import ru.ahmetdavresh.MySecondAppForSpringLab.model.Response;
 import ru.ahmetdavresh.MySecondAppForSpringLab.service.ValidationService;
@@ -37,10 +38,19 @@ public class MyController {
 
         try {
             validationService.isValid(bindingResult);
+
+            if ("123".equals(request.getUid())) {
+                throw new UnsupportedCodeException("Unsupported UID");
+            }
         } catch (ValidationFailedException e) {
             response.setCode("failed");
             response.setErrorCode("ValidationException");
-            response.setErrorMessage("Ошибка валидации!");
+            response.setErrorMessage("Ошибка валидации: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (UnsupportedCodeException e) {
+            response.setCode("failed");
+            response.setErrorCode("UnsupportedCodeException");
+            response.setErrorMessage("Неподдерживаемый UID: " + e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
