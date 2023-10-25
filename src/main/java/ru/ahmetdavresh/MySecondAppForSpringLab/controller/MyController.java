@@ -29,9 +29,10 @@ public class MyController {
         this.validationService = validationService;
         this.modifyResponseService = modifyResponseService;
     }
+
     @PostMapping(value = "/feedback")
     public ResponseEntity<Response> feedback(@Valid @RequestBody Request request, BindingResult bindingResult) {
-        log.info("request: {}", request);
+        log.info("Получен запрос обратной связи: {}", request);
         Response response = Response.builder()
                 .uid(request.getUid())
                 .operationUid(request.getOperationUid())
@@ -44,17 +45,21 @@ public class MyController {
         try {
             validationService.isValid(bindingResult);
         } catch (ValidationFailedException e) {
+            log.error("Ошибка валидации: {}", e.getMessage());
             response.setCode(Codes.FAILED);
             response.setErrorCode(ErrorCodes.VALIDATION_EXCEPTION);
             response.setErrorMessage(ErrorMessages.VALIDATION);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            log.error("Произошла неизвестная ошибка: {}", e.getMessage());
             response.setCode(Codes.FAILED);
             response.setErrorCode(ErrorCodes.UNKNOWN_EXCEPTION);
             response.setErrorMessage(ErrorMessages.UNKNOWN);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
         modifyResponseService.modify(response);
-        return new ResponseEntity<>(modifyResponseService.modify(response), HttpStatus.OK);
+        log.info("Ответ: {}", response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
