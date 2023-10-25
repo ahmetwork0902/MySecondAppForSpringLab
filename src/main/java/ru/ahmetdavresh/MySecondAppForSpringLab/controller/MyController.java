@@ -25,7 +25,7 @@ public class MyController {
     private final ModifyResponseService modifyResponseService;
 
     @Autowired
-    public MyController(ValidationService validationService, @Qualifier("ModifySystemResponseService") ModifyResponseService modifyResponseService) {
+    public MyController(ValidationService validationService, @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService) {
         this.validationService = validationService;
         this.modifyResponseService = modifyResponseService;
     }
