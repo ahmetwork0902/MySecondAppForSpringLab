@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.ahmetdavresh.MySecondAppForSpringLab.exception.ValidationFailedException;
 import ru.ahmetdavresh.MySecondAppForSpringLab.model.*;
+import ru.ahmetdavresh.MySecondAppForSpringLab.service.ModifyRequestService;
 import ru.ahmetdavresh.MySecondAppForSpringLab.service.ModifyResponseService;
 import ru.ahmetdavresh.MySecondAppForSpringLab.service.ValidationService;
 import ru.ahmetdavresh.MySecondAppForSpringLab.util.DateTimeUtil;
@@ -23,11 +24,13 @@ import java.util.Date;
 public class MyController {
     private final ValidationService validationService;
     private final ModifyResponseService modifyResponseService;
+    private final ModifyRequestService modifyRequestService;
 
     @Autowired
-    public MyController(ValidationService validationService, @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService) {
+    public MyController(ValidationService validationService, @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService, ModifyRequestService modifyRequestService) {
         this.validationService = validationService;
         this.modifyResponseService = modifyResponseService;
+        this.modifyRequestService = modifyRequestService;
     }
 
     @PostMapping(value = "/feedback")
@@ -59,7 +62,8 @@ public class MyController {
         }
 
         modifyResponseService.modify(response);
+        modifyRequestService.modify(request);
         log.info("Ответ: {}", response);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(modifyResponseService.modify(response), HttpStatus.OK);
     }
 }
