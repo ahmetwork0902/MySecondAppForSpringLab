@@ -6,18 +6,17 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class AnnualBonusServiceImplTest {
     @Test
-    void calculate() {
+    void calculateQuarterlyBonus() {
         // given
-        Positions position = Positions.HR;
+        Positions position = Positions.TL;
         double bonus = 2.0;
-        int workDays = 243;
         double salary = 100000.00;
 
         // when
-        double result = new AnnualBonusServiceImpl().calculate(position, salary, bonus, workDays);
+        double result = new AnnualBonusServiceImpl().calculateQuarterlyBonus(position, salary, bonus);
 
-        //then
-        double expected = 360493.8271604938;
+        // then
+        double expected = 13000.0; // Assuming 4 quarters in a year
         assertThat(result).isEqualTo(expected);
     }
 }

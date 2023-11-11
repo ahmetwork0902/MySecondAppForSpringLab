@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.ahmetdavresh.MySecondAppForSpringLab.exception.ValidationFailedException;
-import ru.ahmetdavresh.MySecondAppForSpringLab.model.*;
+import ru.ahmetdavresh.MySecondAppForSpringLab.model.Codes;
+import ru.ahmetdavresh.MySecondAppForSpringLab.model.ErrorCodes;
+import ru.ahmetdavresh.MySecondAppForSpringLab.model.ErrorMessages;
+import ru.ahmetdavresh.MySecondAppForSpringLab.model.Request;
+import ru.ahmetdavresh.MySecondAppForSpringLab.model.Response;
 import ru.ahmetdavresh.MySecondAppForSpringLab.service.ModifyRequestService;
 import ru.ahmetdavresh.MySecondAppForSpringLab.service.ModifyResponseService;
 import ru.ahmetdavresh.MySecondAppForSpringLab.service.ValidationService;
@@ -27,7 +31,11 @@ public class MyController {
     private final ModifyRequestService modifyRequestService;
 
     @Autowired
-    public MyController(ValidationService validationService, @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService, ModifyRequestService modifyRequestService) {
+    public MyController(
+            ValidationService validationService,
+            @Qualifier("modifySystemTimeResponseService") ModifyResponseService modifyResponseService,
+            @Qualifier("modifySystemNameRequestService") ModifyRequestService modifyRequestService
+    ) {
         this.validationService = validationService;
         this.modifyResponseService = modifyResponseService;
         this.modifyRequestService = modifyRequestService;
@@ -51,17 +59,9 @@ public class MyController {
         try {
             validationService.isValid(bindingResult);
         } catch (ValidationFailedException e) {
-            log.error("Ошибка валидации: {}", e.getMessage());
-            response.setCode(Codes.FAILED);
-            response.setErrorCode(ErrorCodes.VALIDATION_EXCEPTION);
-            response.setErrorMessage(ErrorMessages.VALIDATION);
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            handleValidationException(e, response);
         } catch (Exception e) {
-            log.error("Произошла неизвестная ошибка: {}", e.getMessage());
-            response.setCode(Codes.FAILED);
-            response.setErrorCode(ErrorCodes.UNKNOWN_EXCEPTION);
-            response.setErrorMessage(ErrorMessages.UNKNOWN);
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            handleUnknownException(e, response);
         }
 
         modifyResponseService.modify(response);
@@ -73,5 +73,19 @@ public class MyController {
         log.info("Время выполнения в миллисекундах: {}", executionTime);
         log.info("Ответ: {}", response);
         return new ResponseEntity<>(modifyResponseService.modify(response), HttpStatus.OK);
+    }
+
+    private void handleValidationException(ValidationFailedException e, Response response) {
+        log.error("Ошибка валидации: {}", e.getMessage());
+        response.setCode(Codes.FAILED);
+        response.setErrorCode(ErrorCodes.VALIDATION_EXCEPTION);
+        response.setErrorMessage(ErrorMessages.VALIDATION);
+    }
+
+    private void handleUnknownException(Exception e, Response response) {
+        log.error("Произошла неизвестная ошибка: {}", e.getMessage());
+        response.setCode(Codes.FAILED);
+        response.setErrorCode(ErrorCodes.UNKNOWN_EXCEPTION);
+        response.setErrorMessage(ErrorMessages.UNKNOWN);
     }
 }
