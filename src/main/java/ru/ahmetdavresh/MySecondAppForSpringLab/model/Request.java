@@ -14,9 +14,11 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Request {
-    @NotBlank
+    /***
+     * Уникальный индетификатор сообщения
+     */
+    @NotBlank (message = "uid не может быть пустым!")
     @Size(max = 32)
     private String uid;
 
@@ -24,22 +26,26 @@ public class Request {
     @Size(max = 32)
     private String operationUid;
 
-    private Systems systemName;  // Тип поля изменен на Systems
+    private Systems systemName;
 
     @NotBlank
     private String systemTime;
 
     private String source;
+    private Positions positions;
+    private Double salary;
+    private Double bonus;
+    private Integer workDays;
 
     @Min(1)
     @Max(100000)
-    private int communicationId;
+    private Integer communicationId;
 
-    private int templateId;
+    private Integer templateId;
 
-    private int productCode;
+    private Integer productCode;
 
-    private int smsCode;
+    private Integer smsCode;
 
     @Override
     public String toString() {
