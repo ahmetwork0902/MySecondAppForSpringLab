@@ -32,7 +32,7 @@ public class Request {
     private String systemTime;
 
     private String source;
-    private Positions positions;
+    private Positions position;
     private Double salary;
     private Double bonus;
     private Integer workDays;
